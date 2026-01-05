@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+group = 'me.grishka'
+version = '1.0-SNAPSHOT'
+
+// Ensure Gradle compiles for Java 17
+sourceCompatibility = 17
+targetCompatibility = 17
+
+sourceSets {
+    main {
+        java { srcDirs = ['src/main/java'] }
+        resources { srcDirs = ['src/main/resources'] }
+    }
+}
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'src/lib'
+    }
+}
+
+dependencies {
+    // Gradle 4.4.1 uses 'compile' instead of 'implementation'
+    compile name: 'lwjgl'
+    compile name: 'lwjgl_util'
+}
+
+// Set the main class for the application plugin
+mainClassName = 'com.mojang.rubydung.RubyDung'
+
+run {
+    // Native path for Raspberry Pi 5 ARM64
+    jvmArgs = ["-Djava.library.path=${projectDir}/src/lib/natives"]
+}

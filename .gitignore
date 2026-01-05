@@ -19,3 +19,11 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# Ignore binary libraries
+src/lib/*.jar
+src/lib/natives/*.so
+
+# Ignore temporary files
+
+**/.tmp/
