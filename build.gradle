@@ -1,17 +1,24 @@
-apply plugin: 'java'
-apply plugin: 'application'
+plugins {
+    id 'java'
+    id 'application'
+}
 
-group = 'me.grishka'
+group = 'dev.lolcathost.grishka'
 version = '1.0-SNAPSHOT'
 
-// Ensure Gradle compiles for Java 17
-sourceCompatibility = 17
-targetCompatibility = 17
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 sourceSets {
     main {
         java { srcDirs = ['src/main/java'] }
-        resources { srcDirs = ['src/main/resources'] }
+        resources { 
+            // This ensures terrain.png is found by the game
+            srcDirs = ['src/main/resources'] 
+        }
     }
 }
 
@@ -23,15 +30,18 @@ repositories {
 }
 
 dependencies {
-    // Gradle 4.4.1 uses 'compile' instead of 'implementation'
-    compile name: 'lwjgl'
-    compile name: 'lwjgl_util'
+    implementation name: 'lwjgl'
+    implementation name: 'lwjgl_util'
 }
 
-// Set the main class for the application plugin
-mainClassName = 'com.mojang.rubydung.RubyDung'
+application {
+    mainClass = 'com.mojang.rubydung.RubyDung'
+}
 
 run {
-    // Native path for Raspberry Pi 5 ARM64
-    jvmArgs = ["-Djava.library.path=${projectDir}/src/lib/natives"]
+    jvmArgs = [
+        "-Djava.library.path=${projectDir}/src/lib/natives",
+        "--add-opens=java.base/java.nio=ALL-UNNAMED",
+        "--add-opens=java.desktop/sun.awt=ALL-UNNAMED"
+    ]
 }

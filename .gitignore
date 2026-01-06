@@ -27,3 +27,7 @@ src/lib/natives/*.so
 # Ignore temporary files
 
 **/.tmp/
+
+# Ignore level.dat files
+
+**/level.dat*
