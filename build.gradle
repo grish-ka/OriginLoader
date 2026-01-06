@@ -38,9 +38,22 @@ application {
     mainClass = 'com.mojang.rubydung.RubyDung'
 }
 
+tasks.register('fatJar', Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.mojang.rubydung.RubyDung'
+    }
+    archiveBaseName = 'OriginLoader'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
 run {
+    // Just the native path, no MESA overrides needed
     jvmArgs = [
-        "-Djava.library.path=${projectDir}/src/lib/natives",
+        "-Djava.library.path=${file('src/lib/natives').absolutePath}",
         "--add-opens=java.base/java.nio=ALL-UNNAMED",
         "--add-opens=java.desktop/sun.awt=ALL-UNNAMED"
     ]
