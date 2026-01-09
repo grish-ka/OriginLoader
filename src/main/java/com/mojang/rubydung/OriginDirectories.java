@@ -10,6 +10,7 @@ public class OriginDirectories {
     public static final File VERSIONS_DIR = new File(MINECRAFT_DIR, "versions");
     public static final File LOGS_DIR = new File(MINECRAFT_DIR, "logs");
     public static final File WORLDS_DIR = new File(MINECRAFT_DIR, "worlds");
+    public static final File MODS_DIR = new File(MINECRAFT_DIR, "mods");
 
     public static void init() {
         if (!MINECRAFT_DIR.exists()) {
@@ -20,5 +21,6 @@ public class OriginDirectories {
         if (!VERSIONS_DIR.exists()) VERSIONS_DIR.mkdirs();
         if (!LOGS_DIR.exists()) LOGS_DIR.mkdirs();
         if (!WORLDS_DIR.exists()) WORLDS_DIR.mkdirs();
+        if (!MODS_DIR.exists()) MODS_DIR.mkdirs();
     }
 }
