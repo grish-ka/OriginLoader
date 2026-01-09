@@ -6,6 +6,11 @@ plugins {
 group = 'me.grishka'
 version = '1.0-SNAPSHOT'
 
+// MANDATORY: This tells the 'run' task which class to launch
+application {
+    mainClass = 'com.mojang.rubydung.RubyDung'
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -63,5 +68,9 @@ run {
         println "Path: ${file("$buildDir/dist/.minecraft").absolutePath}"
         println "----------------------------------------------------"
     }
-    
+    jvmArgs = [
+        "-Djava.library.path=${file('src/lib/natives').absolutePath}",
+        "--add-opens=java.base/java.nio=ALL-UNNAMED",
+        "--add-opens=java.desktop/sun.awt=ALL-UNNAMED"
+    ]
 }

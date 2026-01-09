@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import com.mojang.rubydung.OriginDirectories;
 
 public class Level {
    public final int width;
@@ -40,8 +41,7 @@ public class Level {
 
    public void load() {
       try {
-         DataInputStream dis = new DataInputStream(new GZIPInputStream(new FileInputStream(new File("level.dat"))));
-         dis.readFully(this.blocks);
+         DataInputStream dis = new DataInputStream(new GZIPInputStream(new FileInputStream(new File(OriginDirectories.WORLDS_DIR, "level.dat"))));
          this.calcLightDepths(0, 0, this.width, this.height);
 
          for (int i = 0; i < this.levelListeners.size(); i++) {
@@ -56,7 +56,7 @@ public class Level {
 
    public void save() {
       try {
-         DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(new File("level.dat"))));
+         DataOutputStream dos = new DataOutputStream(new GZIPOutputStream(new FileOutputStream(new File(OriginDirectories.WORLDS_DIR, "level.dat"))));
          dos.write(this.blocks);
          dos.close();
       } catch (Exception var2) {
