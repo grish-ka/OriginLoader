@@ -3,7 +3,7 @@ plugins {
     id 'application'
 }
 
-group = 'dev.lolcathost.grishka'
+group = 'me.grishka'
 version = '1.0-SNAPSHOT'
 
 java {
@@ -12,21 +12,9 @@ java {
     }
 }
 
-sourceSets {
-    main {
-        java { srcDirs = ['src/main/java'] }
-        resources { 
-            // This ensures terrain.png is found by the game
-            srcDirs = ['src/main/resources'] 
-        }
-    }
-}
-
 repositories {
     mavenCentral()
-    flatDir {
-        dirs 'src/lib'
-    }
+    flatDir { dirs 'src/lib' }
 }
 
 dependencies {
@@ -34,27 +22,46 @@ dependencies {
     implementation name: 'lwjgl_util'
 }
 
-application {
-    mainClass = 'com.mojang.rubydung.RubyDung'
-}
-
-tasks.register('fatJar', Jar) {
+// Build the Fat JAR including all dependencies
+jar {
     manifest {
         attributes 'Main-Class': 'com.mojang.rubydung.RubyDung'
     }
-    archiveBaseName = 'OriginLoader'
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    with jar
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// CI/CD Task: Assembles the .minecraft directory structure
+tasks.register('assembleMinecraftDist', Copy){
+    dependsOn jar
+    
+    into "$buildDir/dist/.minecraft"
+
+    // Place the JAR directly in the versions folder
+    into("versions") {
+        from "$buildDir/libs/${project.name}-${project.version}.jar"
+        rename { "rd-132211.jar" }
+    }
+
+    // Include the .OriginLoader metadata folder
+    into(".OriginLoader") {
+        from "src/main/resources/metadata"
+    }
 }
 
 run {
-    // Just the native path, no MESA overrides needed
-    jvmArgs = [
-        "-Djava.library.path=${file('src/lib/natives').absolutePath}",
-        "--add-opens=java.base/java.nio=ALL-UNNAMED",
-        "--add-opens=java.desktop/sun.awt=ALL-UNNAMED"
-    ]
+    dependsOn 'assembleMinecraftDist'
+    // Overrides user.home so the game looks in [project_root]/run/.minecraft
+    systemProperty "user.home", file("$buildDir/dist").absolutePath
+    standardInput = System.in
+    
+    doFirst {
+        println "----------------------------------------------------"
+        println "LAUNCHING IN LOCAL SANDBOX MODE"
+        println "Path: ${file("$buildDir/dist/.minecraft").absolutePath}"
+        println "----------------------------------------------------"
+    }
+    
 }

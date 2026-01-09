@@ -3,6 +3,8 @@ package com.mojang.rubydung;
 import com.mojang.rubydung.level.Chunk;
 import com.mojang.rubydung.level.Level;
 import com.mojang.rubydung.level.LevelRenderer;
+import com.mojang.rubydung.OriginDirectories;
+import com.mojang.rubydung.OriginLogger;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
@@ -254,6 +256,17 @@ public class RubyDung implements Runnable {
    }
 
    public static void main(String[] args) throws LWJGLException {
-      new Thread(new RubyDung()).start();
-   }
+      OriginDirectories.init();
+    
+      // 2. Setup formatted logging in run/.minecraft/logs/latest.log
+      OriginLogger.setup();
+      
+      OriginLogger.LOGGER.info("OriginLoader started in Local Sandbox.");
+
+      try {
+         new Thread(new RubyDung()).start();
+      } catch (Exception e) {
+         OriginLogger.LOGGER.severe("Startup failure: " + e.getMessage());
+    }
+}
 }
