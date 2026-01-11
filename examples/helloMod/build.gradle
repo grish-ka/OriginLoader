@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'me.grishka'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+application {
+    mainClass = 'OriginMod'
+}
+
+repositories {
+    mavenCentral()
+    flatDir { 
+        // We point this to the Loader's lib folder for LWJGL
+        dirs '../../src/lib' 
+    }
+    flatDir {
+        // We point this to the Loader's build folder for the JAR
+        dirs '../../build/libs'
+    }
+}
+
+dependencies {
+    // FIX: Using fileTree to correctly find the JAR without wildcard errors
+    compileOnly fileTree(dir: '../../build/libs', include: ['*.jar'])
+    
+    // LWJGL dependencies
+    compileOnly name: 'lwjgl'
+    compileOnly name: 'lwjgl_util'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'OriginMod'
+    }
+
+}

@@ -261,7 +261,8 @@ public class RubyDung implements Runnable {
       // 2. Setup formatted logging in run/.minecraft/logs/latest.log
       OriginLogger.setup();
       
-      OriginLogger.LOGGER.info("OriginLoader started in Local Sandbox.");
+      OriginLogger.LOGGER.info("Scanning for mods...");
+      ModLoader.loadMods();
 
       try {
          new Thread(new RubyDung()).start();

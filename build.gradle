@@ -38,6 +38,29 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+tasks.register('BuildExamples') {
+    group = 'build'
+    description = 'Compiles example mods and moves them to resources.'
+
+    doLast {
+        // 1. Build example mods - separate the arguments!
+        exec {
+            workingDir 'examples/helloMod'
+            // On Windows, use 'gradle.bat'. On Linux/Mac, 'gradle' or './gradlew'
+            commandLine 'gradle', 'clean', 'build'
+        }
+
+        // 2. Copy built mods to resources/mods
+        // We use project.copy here inside doLast
+        copy {
+            from 'examples/helloMod/build/libs'
+            include '*.jar'
+            into 'src/main/resources/mods'
+        }
+        
+        println "Example mods have been built and copied to src/main/resources/mods"
+    }
+}
 // CI/CD Task: Assembles the .minecraft directory structure
 tasks.register('assembleMinecraftDist', Copy){
     dependsOn jar
@@ -50,6 +73,10 @@ tasks.register('assembleMinecraftDist', Copy){
         rename { "rd-132211.jar" }
     }
 
+    into("mods") {
+        from "src/main/resources/mods" // You can put default mods here
+    }
+
     // Include the .OriginLoader metadata folder
     into(".OriginLoader") {
         from "src/main/resources/metadata"
@@ -58,6 +85,7 @@ tasks.register('assembleMinecraftDist', Copy){
 
 run {
     dependsOn 'assembleMinecraftDist'
+    dependsOn 'BuildExamples'
     // Overrides user.home so the game looks in [project_root]/run/.minecraft
     systemProperty "user.home", file("$buildDir/dist").absolutePath
     standardInput = System.in
