@@ -13,7 +13,7 @@ java {
 }
 
 application {
-    mainClass = 'OriginMod'
+    mainClass = 'com.grishka.OriginLoader.helloMod.OriginMod'
 }
 
 repositories {
@@ -39,7 +39,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'OriginMod'
+        attributes 'Origin-Mod-Class': 'com.grishka.OriginLoader.helloMod.OriginMod'
     }
 
 }

@@ -91,7 +91,7 @@ public class RubyDung implements Runnable {
             frames++;
 
             while (System.currentTimeMillis() >= lastTime + 1000L) {
-               System.out.println(frames + " fps, " + Chunk.updates);
+               OriginLogger.LOGGER.info(frames + " fps, " + Chunk.updates + " Chunk Updates");
                Chunk.updates = 0;
                lastTime += 1000L;
                frames = 0;
