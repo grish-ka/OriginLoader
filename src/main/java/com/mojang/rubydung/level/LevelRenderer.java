@@ -85,7 +85,7 @@ public class LevelRenderer implements LevelListener {
                   for (int i = 0; i < 6; i++) {
                      GL11.glPushName(i);
                      this.t.init();
-                     Tile.rock.renderFace(this.t, x, y, z, i);
+                     Tile.grass.renderFace(this.t, x, y, z, i);
                      this.t.flush();
                      GL11.glPopName();
                   }
@@ -108,7 +108,7 @@ public class LevelRenderer implements LevelListener {
       GL11.glBlendFunc(770, 1);
       GL11.glColor4f(1.0F, 1.0F, 1.0F, (float)Math.sin(System.currentTimeMillis() / 100.0) * 0.2F + 0.4F);
       this.t.init();
-      Tile.rock.renderFace(this.t, h.x, h.y, h.z, h.f);
+      Tile.grass.renderFace(this.t, h.x, h.y, h.z, h.f);
       this.t.flush();
       GL11.glDisable(3042);
    }

@@ -7,15 +7,23 @@ import java.net.URLClassLoader;
 import java.net.JarURLConnection;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.Attributes;
 
 // import local systems
 import com.mojang.rubydung.OriginDirectories;
 import com.mojang.rubydung.OriginLogger;
+import com.mojang.rubydung.level.IWorldGenerator;
 
 public class ModLoader {
-    // API Hook for World Generation
-    public static java.util.function.BiFunction<Integer, Integer, com.mojang.rubydung.level.Tile> worldGenHook = null;
+    // A list to hold all registered mod generators
+    public static final List<IWorldGenerator> GENERATORS = new ArrayList<>();
+
+    public static void registerGenerator(IWorldGenerator gen) {
+        OriginLogger.LOGGER.info("Registering world generator: " + gen.getClass().getName());
+        GENERATORS.add(gen);
+    }
 
     public static void loadMods() {
         File[] files = OriginDirectories.MODS_DIR.listFiles((dir, name) -> name.endsWith(".jar"));
