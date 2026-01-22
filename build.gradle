@@ -26,7 +26,6 @@ dependencies {
     implementation name: 'lwjgl'
     implementation name: 'lwjgl_util'
 }
-
 // Build the Fat JAR including all dependencies
 jar {
     manifest {
@@ -41,6 +40,7 @@ jar {
 tasks.register('BuildExamples') {
     group = 'build'
     description = 'Compiles example mods and moves them to resources.'
+    dependsOn jar
 
     doLast {
         // 1. Build example mods - separate the arguments!
@@ -61,6 +61,11 @@ tasks.register('BuildExamples') {
         println "Example mods have been built and copied to src/main/resources/mods"
     }
 }
+
+tasks.build {
+    dependsOn 'BuildExamples'
+}
+
 // CI/CD Task: Assembles the .minecraft directory structure
 tasks.register('assembleMinecraftDist', Copy){
     dependsOn jar
