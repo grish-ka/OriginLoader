@@ -19,6 +19,7 @@ import com.mojang.rubydung.level.IWorldGenerator;
 public class ModLoader {
     // A list to hold all registered mod generators
     public static final List<IWorldGenerator> GENERATORS = new ArrayList<>();
+    public static int terrainTextureId;
 
     public static void registerGenerator(IWorldGenerator gen) {
         OriginLogger.LOGGER.info("Registering world generator: " + gen.getClass().getName());
@@ -57,6 +58,7 @@ public class ModLoader {
             } catch (Exception e) {
                 OriginLogger.LOGGER.warning("Failed to load mod " + file.getName() + ": " + e.getMessage());
             }
+            terrainTextureId = Textures.bakeAtlas("/terrain.png");
         }
     }
 }

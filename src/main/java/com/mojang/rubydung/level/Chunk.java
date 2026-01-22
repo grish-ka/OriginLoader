@@ -15,7 +15,7 @@ public class Chunk {
    public final int z1;
    private boolean dirty = true;
    private int lists = -1;
-   private static int texture = Textures.loadTexture("/terrain.png", 9728);
+   private static int texture = com.mojang.rubydung.ModLoader.terrainTextureId;
    private static Tesselator t = new Tesselator();
    public static int rebuiltThisFrame = 0;
    public static int updates = 0;

@@ -41,6 +41,10 @@ public class RubyDung implements Runnable {
       ((Buffer)this.fogColor).flip();
       Display.setDisplayMode(new DisplayMode(1024, 768));
       Display.create();
+      ModLoader.terrainTextureId = Textures.bakeAtlas("/terrain.png");
+      
+      // 3. Update the engine to use the new baked texture
+      Chunk.texture = ModLoader.terrainTextureId;
       Keyboard.create();
       Mouse.create();
       this.width = Display.getDisplayMode().getWidth();
