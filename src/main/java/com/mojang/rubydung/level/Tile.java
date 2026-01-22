@@ -1,18 +1,23 @@
 package com.mojang.rubydung.level;
 
 public class Tile {
-   public static Tile rock = new Tile(0);
-   public static Tile grass = new Tile(1);
-   private int tex = 0;
+   public static Tile grass = new Tile(0, 0);
+   public static Tile rock = new Tile(1, 0);
+   
+   private int texU;
+   private int texV;
 
-   private Tile(int tex) {
-      this.tex = tex;
+   // Changed to public so mods can create new block types
+   public Tile(int u, int v) {
+      this.texU = u;
+      this.texV = v;
    }
 
    public void render(Tesselator t, Level level, int layer, int x, int y, int z) {
-      float u0 = this.tex / 16.0F;
+      // Dynamically calculate UV based on the 16x16 grid
+      float u0 = this.texU / 16.0F;
       float u1 = u0 + 0.0624375F;
-      float v0 = 0.0F;
+      float v0 = this.texV / 16.0F; // No longer hardcoded to 0.0F
       float v1 = v0 + 0.0624375F;
       float c1 = 1.0F;
       float c2 = 0.8F;

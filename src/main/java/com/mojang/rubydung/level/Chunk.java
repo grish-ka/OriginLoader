@@ -15,7 +15,7 @@ public class Chunk {
    public final int z1;
    private boolean dirty = true;
    private int lists = -1;
-   private static int texture = Textures.loadTexture("/terrain.png", 9728);
+   public static int texture = com.mojang.rubydung.ModLoader.terrainTextureId;
    private static Tesselator t = new Tesselator();
    public static int rebuiltThisFrame = 0;
    public static int updates = 0;
@@ -47,13 +47,16 @@ public class Chunk {
             for (int y = this.y0; y < this.y1; y++) {
                for (int z = this.z0; z < this.z1; z++) {
                   if (this.level.isTile(x, y, z)) {
-                     int tex = y == this.level.depth * 2 / 3 ? 0 : 1;
-                     tiles++;
-                     if (tex == 0) {
-                        Tile.rock.render(t, this.level, layer, x, y, z);
-                     } else {
-                        Tile.grass.render(t, this.level, layer, x, y, z);
+                     // 1. Start with the engine's default logic
+                     Tile tile = (y == this.level.depth * 2 / 3) ? Tile.grass : Tile.rock;
+
+                     // 2. Let every mod modify the tile in order
+                     for (com.mojang.rubydung.level.IWorldGenerator gen : com.mojang.rubydung.ModLoader.GENERATORS) {
+                        tile = gen.getTile(y, this.level.depth, tile);
                      }
+
+                     tiles++;
+                     tile.render(t, this.level, layer, x, y, z);
                   }
                }
             }
