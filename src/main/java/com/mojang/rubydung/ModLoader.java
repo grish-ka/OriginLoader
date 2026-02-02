@@ -37,12 +37,14 @@ public class ModLoader {
                 URL url = file.toURI().toURL();
                 URLClassLoader classLoader = new URLClassLoader(new URL[]{url}, ModLoader.class.getClassLoader());
                 String modClassName = null;
+                String modVersion = "unknown";
 
                 // Attempt to read the entry point from the Manifest
                 try (JarFile jarFile = new JarFile(file)) {
                     Manifest manifest = jarFile.getManifest();
                     if (manifest != null) {
                         modClassName = manifest.getMainAttributes().getValue("Origin-Mod-Class");
+                        modVersion = manifest.getMainAttributes().getValue("Origin-Mod-Version");
                     }
                 }
 
@@ -50,11 +52,14 @@ public class ModLoader {
                 if (modClassName == null) {
                     modClassName = "OriginMod";
                 }
+                if (modVersion == null) {
+                    modVersion = "unknown version";
+                }
 
                 Class<?> modClass = Class.forName(modClassName, true, classLoader);
                 modClass.getDeclaredMethod("init").invoke(null);
                 
-                OriginLogger.LOGGER.info("Successfully initialized mod: " + modClassName);
+                OriginLogger.LOGGER.info("Successfully initialized mod: " + modClassName + " v" + modVersion);
             } catch (Exception e) {
                 OriginLogger.LOGGER.warning("Failed to load mod " + file.getName() + ": " + e.getMessage());
             }

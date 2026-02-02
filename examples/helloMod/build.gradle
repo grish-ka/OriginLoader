@@ -1,10 +1,16 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.grishka.OriginMod'
 }
 
 group = 'me.grishka'
 version = '1.0-SNAPSHOT'
+
+originMod {
+    MODID = 'helloMod'
+    MODVERSION = '1.0.0'
+}
 
 java {
     toolchain {

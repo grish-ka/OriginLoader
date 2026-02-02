@@ -1,0 +1,5 @@
+// settings.gradle
+rootProject.name = 'OriginLoader'
+
+include 'examples:rubyMod'
+// Any project included here can "see" the classes inside buildSrc

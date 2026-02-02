@@ -1,0 +1,12 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+gradlePlugin {
+    plugins {
+        originMod {
+            id = 'com.grishka.OriginMod'
+            implementationClass = 'com.grishka.OriginMod.OriginPlugin'
+        }
+    }
+}
