@@ -5,5 +5,5 @@ java -Djava.library.path=bin/natives \
      -Dorg.lwjgl.opengl.Display.noXRandR=true \
      --add-opens=java.base/java.nio=ALL-UNNAMED \
      --add-opens=java.desktop/sun.awt=ALL-UNNAMED \
-     -cp "bin/OriginLoader-1.0.0.jar" \
+     -cp "bin/OriginLoader-1.0-SNAPSHOT.jar" \
      com.mojang.rubydung.RubyDung
