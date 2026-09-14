@@ -43,21 +43,20 @@ tasks.register('BuildExamples') {
     dependsOn jar
 
     doLast {
-        // 1. Build example mods - separate the arguments!
+        def isWindows = System.getProperty('os.name').toLowerCase().contains('windows')
+        def gradlew = isWindows ? "${rootDir}/gradlew.bat" : "${rootDir}/gradlew"
+
         exec {
             workingDir 'examples/helloMod'
-            // On Windows, use 'gradle.bat'. On Linux/Mac, 'gradle' or './gradlew'
-            commandLine 'gradle', 'clean', 'build'
+            commandLine gradlew, 'clean', 'build'
         }
 
-        // 2. Copy built mods to resources/mods
-        // We use project.copy here inside doLast
         copy {
             from 'examples/helloMod/build/libs'
             include '*.jar'
             into 'src/main/resources/mods'
         }
-        
+
         println "Example mods have been built and copied to src/main/resources/mods"
     }
 }
@@ -88,12 +87,71 @@ tasks.register('assembleMinecraftDist', Copy){
     }
 }
 
+tasks.register('packageReleaseZip', Zip) {
+    group = 'distribution'
+    description = 'Packages the portable OriginLoader standalone release.'
+    dependsOn jar, 'BuildExamples'
+
+    archiveFileName = "OriginLoader-${project.version}-Portable.zip"
+    destinationDirectory = file("$buildDir/distributions")
+
+    // 1. Loader JAR
+    into('bin') {
+        from tasks.jar.archiveFile
+    }
+
+    into("bin/natives") {
+        from("src/lib/natives") {
+            // Only include real binary files; exclude WSL symlinks that break Windows snapshotting
+            include '*.dll', '*.so', '*.dylib'
+            exclude 'liblwjgl.so', 'libopenal.so' // exclude symlinks if copies exist
+        }
+    }
+
+    // 3. Mods directory with example mod
+    into('mods') {
+        from 'src/main/resources/mods'
+    }
+
+    // 4. Scripts & README
+    from('dist-scripts') {
+        include 'run.bat', 'run.sh', 'README.txt'
+    }
+}
+
+tasks.register('packageMDKZip', Zip) {
+    group = 'distribution'
+    description = 'Packages the Mod Development Kit (MDK) ZIP for creators.'
+    dependsOn jar
+
+    archiveBaseName = "OriginLoader-${project.version}-MDK"
+    destinationDirectory = file("$buildDir/distributions")
+
+    // 1. Include MDK template files
+    from("mdk") {
+        exclude "libs/**"
+    }
+
+    // 2. Bundle the compiled loader JAR directly into libs/
+    into("libs") {
+        from tasks.jar.archiveFile
+        rename { "OriginLoader.jar" }
+    }
+}
+
 run {
     dependsOn 'assembleMinecraftDist'
     dependsOn 'BuildExamples'
     // Overrides user.home so the game looks in [project_root]/run/.minecraft
     systemProperty "user.home", file("$buildDir/dist").absolutePath
     standardInput = System.in
+
+    jvmArgs = [
+            "-Djava.library.path=${file('src/lib/natives').absolutePath}",
+            "-Dorg.lwjgl.opengl.Display.noXRandR=true",
+            "--add-opens=java.base/java.nio=ALL-UNNAMED",
+            "--add-opens=java.desktop/sun.awt=ALL-UNNAMED"
+    ]
     
     doFirst {
         println "----------------------------------------------------"

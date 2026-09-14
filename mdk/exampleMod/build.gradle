@@ -8,7 +8,7 @@ group = 'me.grishka'
 version = '1.0-SNAPSHOT'
 
 originMod {
-    MODID = 'helloMod'
+    MODID = 'exampleMod'
     MODVERSION = '1.0.0'
 }
 
@@ -19,25 +19,24 @@ java {
 }
 
 application {
-    mainClass = 'com.grishka.OriginLoader.helloMod.OriginMod'
+    mainClass = 'com.example.exampleMod.OriginMod'
 }
 
 repositories {
     mavenCentral()
     flatDir {
-        // We point this to the Loader's lib folder for LWJGL
-        dirs '../../src/lib'
+        dirs 'src/lib'
     }
     flatDir {
         // We point this to the Loader's build folder for the JAR
-        dirs '../../build/libs'
+        dirs 'libs'
     }
 }
 
 dependencies {
     // FIX: Using fileTree to correctly find the JAR without wildcard errors
-    compileOnly fileTree(dir: '../../build/libs', include: ['*.jar'])
-    
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+
     // LWJGL dependencies
     compileOnly name: 'lwjgl'
     compileOnly name: 'lwjgl_util'
@@ -45,7 +44,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Origin-Mod-Class': 'com.grishka.OriginLoader.helloMod.OriginMod'
+        attributes 'Origin-Mod-Class': 'com.grishka.OriginLoader.modTwo.OriginMod'
     }
 
 }
