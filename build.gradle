@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'me.grishka'
-version = '1.0-SNAPSHOT'
+version = '1.0-SNAPSHOT2'
 
 // MANDATORY: This tells the 'run' task which class to launch
 application {
@@ -89,36 +89,31 @@ tasks.register('assembleMinecraftDist', Copy){
 
 tasks.register('packageReleaseZip', Zip) {
     group = 'distribution'
-    description = 'Packages the portable OriginLoader standalone release.'
-    dependsOn jar, 'BuildExamples'
+    description = 'Packages OriginLoader using assembleMinecraftDist layout.'
+    dependsOn assembleMinecraftDist, 'BuildExamples'
 
-    archiveFileName = "OriginLoader-${project.version}-Portable.zip"
+    archiveBaseName = "OriginLoader-${project.version}-Portable"
     destinationDirectory = file("$buildDir/distributions")
 
-    // 1. Loader JAR
-    into('bin') {
-        from tasks.jar.archiveFile
+    // 1. Pack the entire .minecraft folder built by assembleMinecraftDist
+    into(".minecraft") {
+        from "$buildDir/dist/.minecraft"
     }
 
-    into("bin/natives") {
+    // 2. Include natives inside .minecraft/bin/natives
+    into(".minecraft/bin/natives") {
         from("src/lib/natives") {
-            // Only include real binary files; exclude WSL symlinks that break Windows snapshotting
             include '*.dll', '*.so', '*.dylib'
-            exclude 'liblwjgl.so', 'libopenal.so' // exclude symlinks if copies exist
         }
     }
 
-    // 3. Mods directory with example mod
-    into('mods') {
-        from 'src/main/resources/mods'
-    }
-
-    // 4. Scripts & README
-    from('dist-scripts') {
-        include 'run.bat', 'run.sh', 'README.txt'
+    // 3. Include launch scripts at root
+    into("") {
+        from("dist-scripts") {
+            include "run.bat", "run.sh", "README.txt"
+        }
     }
 }
-
 tasks.register('packageMDKZip', Zip) {
     group = 'distribution'
     description = 'Packages the Mod Development Kit (MDK) ZIP for creators.'
