@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'me.grishka'
-version = '1.0-SNAPSHOT2'
+version = '1.0-SNAPSHOT3'
 
 // MANDATORY: This tells the 'run' task which class to launch
 application {
@@ -116,18 +116,22 @@ tasks.register('packageReleaseZip', Zip) {
 }
 tasks.register('packageMDKZip', Zip) {
     group = 'distribution'
-    description = 'Packages the Mod Development Kit (MDK) ZIP for creators.'
+    description = 'Packages the Mod Development Kit (MDK) ZIP.'
     dependsOn jar
 
     archiveBaseName = "OriginLoader-${project.version}-MDK"
     destinationDirectory = file("$buildDir/distributions")
 
-    // 1. Include MDK template files
-    from("mdk") {
-        exclude "libs/**"
+    // Mod template files
+    from("mdk/exampleMod")
+
+    // Ensure Gradle wrapper files (including the binary jar) are bundled
+    from(".") {
+        include "gradlew", "gradlew.bat"
+        include "gradle/wrapper/gradle-wrapper.jar"
+        include "gradle/wrapper/gradle-wrapper.properties"
     }
 
-    // 2. Bundle the compiled loader JAR directly into libs/
     into("libs") {
         from tasks.jar.archiveFile
         rename { "OriginLoader.jar" }
