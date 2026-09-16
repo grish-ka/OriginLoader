@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'me.grishka'
-version = '1.0-SNAPSHOT3'
+version = '1.0.0-alpha.4'
 
 // MANDATORY: This tells the 'run' task which class to launch
 application {
@@ -123,7 +123,7 @@ tasks.register('packageMDKZip', Zip) {
     destinationDirectory = file("$buildDir/distributions")
 
     // Mod template files
-    from("mdk/exampleMod")
+    from("mdk/")
 
     // Ensure Gradle wrapper files (including the binary jar) are bundled
     from(".") {
